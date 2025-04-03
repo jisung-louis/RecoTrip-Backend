@@ -53,14 +53,17 @@ recotrip-backend/
 git clone https://github.com/jisung-louis/RecoTrip-Backend.git
 cd RecoTrip-Backend
 
-# 2. 의존성 설치
+# 2. 개발 브랜치(dev)로 전환
+git checkout dev
+
+# 3. 의존성 설치
 npm install
 
-# 3. 환경 변수 설정
+# 4. 환경 변수 설정
 cp .env.example .env
 # .env 파일에 실제 API 키와 설정값 입력
 
-# 4. 서버 실행
+# 5. 서버 실행
 npm run dev
 ```
 ---
