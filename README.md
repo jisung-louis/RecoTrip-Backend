@@ -51,7 +51,7 @@ recotrip-backend/
 ```bash
 # 1. 저장소 클론
 git clone https://github.com/jisung-louis/RecoTrip-Backend.git
-cd recotrip-backend
+cd RecoTrip-Backend
 
 # 2. 의존성 설치
 npm install
