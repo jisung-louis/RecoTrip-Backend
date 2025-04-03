@@ -1,0 +1,29 @@
+{
+  "name": "recotrip-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "Team F4",
+  "contributors": [
+    "Chun Ji-sung (PM)",
+    "Song Jin-woo (frontend)",
+    "Kim Min-su (backend)",
+    "Lim Da-bin (design)"
+  ],
+  "license": "MIT",
+  "description": "RecoTrip 프로젝트의 Node.js 백엔드 서버",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
