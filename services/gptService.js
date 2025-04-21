@@ -1,49 +1,79 @@
 // 도시추천
 require('dotenv').config();
 const axios = require('axios');
+const admin = require('firebase-admin');
+const serviceAccount = require('../configs/recotrip-service-account.json');
+
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+}
+const db = admin.firestore();
 
 const GPT_API_KEY = process.env.GPT_API_KEY;
 
-exports.getRecommendedCities = async (promptText) => {
-  const prompt = `
-  여행을 가고 싶어하는 사용자가 이렇게 말했어: "${promptText}"
-  이 사람에게 추천할만한 전 세계 도시 3곳을 알려줘.
-  결과는 JSON 배열 형식으로 응답해줘. 예: ["프랑스 파리", "일본 도쿄", "그리스 로마"]
-  `;
-
+exports.getRecommendedCities = async (userKeywords) => {
   try {
+    const snapshot = await db.collection('cities').get();
+    const cities = snapshot.docs.map(doc => ({
+      id: doc.id,
+      name_ko: doc.data().name_ko,
+      keywords: doc.data().keywords || [],
+      country: doc.data().country
+    }));
+
+    const cityListString = cities.map(city => {
+      return `ID: ${city.id}, 이름: ${city.name_ko}, 키워드: [${city.keywords.join(', ')}]`;
+    }).join('\n');
+
+    const prompt = `
+다음은 여행 도시 후보 리스트야:
+
+${cityListString}
+
+사용자가 입력한 키워드는: [${userKeywords.join(', ')}] 이고,
+이 키워드에 가장 잘 어울리는 도시 5개를 골라줘.
+도시는 위의 ID 기준으로 JSON 배열 형식으로 응답해줘.
+예: ["tokyo", "lhasa", "bali", "chiang_mai", "kathmandu"]
+`;
+
     const response = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: '당신은 여행 추천 도우미입니다.' },
-          { role: 'user', content: prompt },
+          { role: 'system', content: '당신은 여행지 추천 전문가입니다.' },
+          { role: 'user', content: prompt }
         ],
-        temperature: 0.8,
+        temperature: 0.7
       },
       {
         headers: {
           Authorization: `Bearer ${GPT_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       }
     );
 
     const content = response.data.choices[0].message.content;
     console.log("GPT 응답:", content);
 
+    let recommendedIds;
     try {
-      return JSON.parse(content);
+      recommendedIds = JSON.parse(content);
     } catch (e) {
-      return content
+      recommendedIds = content
         .split('\n')
-        .map(line => line.trim())
+        .map(line => line.replace(/["\[\],]/g, '').trim())
         .filter(Boolean);
     }
+
+    const recommended = cities.filter(city => recommendedIds.includes(city.id));
+    return recommended;
   } catch (error) {
-    console.error("GPT API 호출 에러:", error.response?.data || error.message);
-    throw new Error("GPT 호출 실패");
+    console.error("도시 추천 오류:", error.message);
+    throw new Error("도시 추천 실패");
   }
 };
 

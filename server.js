@@ -45,6 +45,6 @@ const swaggerSpec = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //Backend 실행
-app.listen(PORT, () => {
-  console.log(`RecoTrip backend running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`RecoTrip backend running at http://0.0.0.0:${PORT}`);
 });

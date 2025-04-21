@@ -42,3 +42,6 @@ firebase-debug.log
 
 # Project-specific
 package-lock.json
+
+#firebase service account key
+recotrip-service-account.json
