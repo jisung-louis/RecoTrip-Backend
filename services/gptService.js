@@ -2,7 +2,7 @@
 require('dotenv').config();
 const axios = require('axios');
 const admin = require('firebase-admin');
-const serviceAccount = require('../configs/recotrip-service-account.json');
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 if (!admin.apps.length) {
   admin.initializeApp({
