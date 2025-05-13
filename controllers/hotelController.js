@@ -1,14 +1,14 @@
 const { fetchHotelsByCity } = require('../services/googleHotelService');
 
 exports.getHotelsByCity = async (req, res) => {
-  const { city } = req.query;
+  const { lat, lng, radius = 1500 } = req.query;
 
-  if (!city) {
-    return res.status(400).json({ error: 'city 파라미터가 필요합니다.' });
+  if (!lat || !lng) {
+    return res.status(400).json({ error: 'lat, lng 파라미터가 필요합니다.' });
   }
 
   try {
-    const hotels = await fetchHotelsByCity(city);
+    const hotels = await fetchHotelsByCity(Number(lat), Number(lng), Number(radius));
     res.json({ hotels });
   } catch (err) {
     console.error('[호텔 API 에러]', err.message);
