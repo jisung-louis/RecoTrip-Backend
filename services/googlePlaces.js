@@ -14,7 +14,8 @@ exports.searchPlaces = async (query) => {
     },
     {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.location,places.id,places.photos'
       }
     }
   );
